@@ -1,0 +1,15 @@
+E:\Gitprojects\SWStar\Data\bin\Debug\net6.0\Data.deps.json
+E:\Gitprojects\SWStar\Data\bin\Debug\net6.0\Data.dll
+E:\Gitprojects\SWStar\Data\bin\Debug\net6.0\Data.pdb
+E:\Gitprojects\SWStar\Data\bin\Debug\net6.0\Entities.dll
+E:\Gitprojects\SWStar\Data\bin\Debug\net6.0\Entities.pdb
+E:\Gitprojects\SWStar\Data\obj\Debug\net6.0\Data.csproj.AssemblyReference.cache
+E:\Gitprojects\SWStar\Data\obj\Debug\net6.0\Data.GeneratedMSBuildEditorConfig.editorconfig
+E:\Gitprojects\SWStar\Data\obj\Debug\net6.0\Data.AssemblyInfoInputs.cache
+E:\Gitprojects\SWStar\Data\obj\Debug\net6.0\Data.AssemblyInfo.cs
+E:\Gitprojects\SWStar\Data\obj\Debug\net6.0\Data.csproj.CoreCompileInputs.cache
+E:\Gitprojects\SWStar\Data\obj\Debug\net6.0\Data.csproj.CopyComplete
+E:\Gitprojects\SWStar\Data\obj\Debug\net6.0\Data.dll
+E:\Gitprojects\SWStar\Data\obj\Debug\net6.0\refint\Data.dll
+E:\Gitprojects\SWStar\Data\obj\Debug\net6.0\Data.pdb
+E:\Gitprojects\SWStar\Data\obj\Debug\net6.0\ref\Data.dll
