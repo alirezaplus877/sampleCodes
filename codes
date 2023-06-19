@@ -1,0 +1,291 @@
+using AutoMapper;
+using Dto.SwStar.Product;
+using Entities.PgwEntities;
+using Entities.SwStar;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using PEC.CoreCommon.Attribute;
+using PEC.DataAccess.Repository;
+using Pigi.MDbLogging;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Repository.Repository
+{
+    [ScopedService]
+    public class ProductRepository : BaseRespository<Product, SwstarContext>, IProductRepository, ILoggable
+    {
+        private readonly IServiceProvider _serviceProvider;
+        private readonly IMapper Mapper;
+        private readonly IMdbLogger<ProductRepository> Logger;
+        public ProductRepository(IServiceProvider serviceProvider,
+                                    IMdbLogger<ProductRepository> logger,
+                                    IMapper mapper) : base(serviceProvider)
+        {
+            Logger = logger;
+            Mapper = mapper;
+            _serviceProvider = serviceProvider;
+        }
+        public async Task<long> AddProduct(ProductDto model)
+        {
+            try
+            {
+                var entity = Mapper.Map<Product>(model);
+              // var repocateg= this.GetRepository<ProductCategory, SwstarContext>();
+                //var categ = repocateg.Get(e => e.Id == model.ProductCategoryId).FirstOrDefault();
+                //if (categ == null) { return 0; }
+
+                var _repo = this.GetRepository<MerchantCategoryCode, SwstarContext>();
+                var mcCode =_repo.Get(a => a.Id == model.Mccode).FirstOrDefault();
+                if(mcCode == null)
+                    return 0;
+
+                entity.InsertDate = DateTime.Now;
+              //  entity.ProductCategory.Products.Add(entity);
+                entity.Mccodes.Add(mcCode);
+
+                reopsitory.Insert(entity);
+
+                var isSaved = await reopsitory.SaveChangesAsync() > 0;
+
+                return entity.Id;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(100, $"📥 AddProduct When Got Exception", JsonConvert.SerializeObject(model), ex);
+                return 0;
+            }
+        }
+
+        public async Task<int> AddProductCategory(ProductCategoryDto model)
+        {
+            try
+            {
+                var _rep = this.GetRepository<ProductCategory, SwstarContext>();
+                var entity = Mapper.Map<ProductCategory>(model);
+                entity.InsretDate = DateTime.Now;
+
+                _rep.Insert(entity);
+                int m = await _rep.SaveChangesAsync();
+                return entity.Id;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(100, $"📥 AddProductCategory When Got Exception", JsonConvert.SerializeObject(model), ex);
+                return 0;
+            }
+        }
+
+        public async Task<bool> AddProviderRequest(ProviderRequestDto model)
+        {
+            try
+            {
+                var _rep = this.GetRepository<ProviderRequest, SwstarContext>();
+                var entity = Mapper.Map<ProviderRequest>(model);
+                entity.InsertDate= DateTime.Now;
+                entity.RequestDate = DateTime.Now;
+                _rep.Insert(entity);
+                int m = await _rep.SaveChangesAsync();
+                if (m > 0)
+                {
+                    return true;
+                }
+                else { return false; }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(100, $"📥 AddProviderRequest When Got Exception", JsonConvert.SerializeObject(model), ex);
+                return false;
+            }
+        }
+
+        public  async Task<ProductDto> GetProductById(long Id)
+        {
+            try
+            {
+                var _rep = this.GetRepository<Product, SwstarContext>();
+                var data = await _rep.Get(a => a.Id == Id).FirstOrDefaultAsync();
+                var res = Mapper.Map<ProductDto>(data);
+                return  res;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(100, $"📥 GetProductById When Got Exception", JsonConvert.SerializeObject(Id), ex);
+                return null;
+            }
+        }
+
+        //public bool MccProductRelation(long id, int mCCId)
+        //{
+        //    try
+        //    {
+        //        var _rep = this.GetRepository<Product, SwstarContext>();
+        //        var m=_rep.
+        //        var entity = Mapper.Map<ProviderRequest>(model);
+        //        _rep.Insert(entity);
+        //        int m = await _rep.SaveChangesAsync();
+        //        if (m > 0)
+        //        {
+        //            return true;
+        //        }
+        //        else { return false; }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Logger.Log(100, $"📥 AddProviderRequest When Got Exception", JsonConvert.SerializeObject(model), ex);
+        //        return false;
+        //    }
+        //}
+
+        public async  Task<bool> ProductActivation(long id)
+        {
+            try
+            {
+                var _rep = this.GetRepository<Product, SwstarContext>();
+                var data = await _rep.Get(t => t.Id == id).FirstOrDefaultAsync();
+                if (data == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    data.IsActive = true;
+                    data.UpdateDate = DateTime.Now;
+
+                    _rep.Update(data);
+                    var result = await _rep.SaveChangesAsync() > 0;
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(100, $"📥 ProductActivation When Got Exception", JsonConvert.SerializeObject(id), ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> ProductCategoryActivation(long id)
+        {
+            try
+            {
+                var _rep = this.GetRepository<ProductCategory, SwstarContext>();
+                var data = await _rep.Get(t => t.Id == id).FirstOrDefaultAsync();
+                if (data == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    data.IsActive = true;
+                    data.UpdateDate = DateTime.Now;
+
+                    _rep.Update(data);
+                    var result = await _rep.SaveChangesAsync() > 0;
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(100, $"📥 ProductCategoryActivation When Got Exception", JsonConvert.SerializeObject(id), ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> ProductCategoryDectivation(long id)
+        {
+            try
+            {
+                var _rep = this.GetRepository<ProductCategory, SwstarContext>();
+                var data = await _rep.Get(t => t.Id == id).FirstOrDefaultAsync();
+                if (data == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    data.IsActive = false;
+                    data.UpdateDate = DateTime.Now;
+
+                    _rep.Update(data);
+                    var result = await _rep.SaveChangesAsync() > 0;
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(100, $"📥 ProductCategoryActivation When Got Exception", JsonConvert.SerializeObject(id), ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> ProductDeactivation(long id)
+        {
+            try
+            {
+                var _rep = this.GetRepository<Product, SwstarContext>();
+                var data = await _rep.Get(t => t.Id == id).FirstOrDefaultAsync();
+                if (data == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    data.IsActive = false;
+                    data.UpdateDate = DateTime.Now;
+
+                    _rep.Update(data);
+                    var result = await _rep.SaveChangesAsync() > 0;
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(100, $"📥 ProductActivation When Got Exception", JsonConvert.SerializeObject(id), ex);
+                return false;
+            }
+        }
+
+        public async Task<long> UpdateProduct(ProductDto model)
+        {
+            try
+            {
+                var entity = Mapper.Map<Product>(model);
+                entity.UpdateDate= DateTime.Now;
+                
+               // var _repo = this.GetRepository<MerchantCategoryCode, SwstarContext>();
+                //var mcCode = _repo.Get(a => a.Id == model.Mccode).FirstOrDefault();
+                //if (mcCode == null)
+                //    return 0;
+
+                //entity.Mccodes.Add(mcCode);
+                reopsitory.Update(entity);
+
+                var isSaved = await reopsitory.SaveChangesAsync() > 0;
+
+                return entity.Id;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(100, $"📥 UpdateProduct When Got Exception", JsonConvert.SerializeObject(model), ex);
+                return 0;
+            }
+        }
+    }
+    public interface IProductRepository
+    {
+        Task<long> AddProduct(ProductDto model);
+      //  bool MccProductRelation(long id, int mCCId);
+        Task<long> UpdateProduct(ProductDto dto);
+        Task<bool> ProductActivation(long id);
+        Task<bool> ProductDeactivation(long id);
+        Task<ProductDto> GetProductById(long Id);
+        Task<int> AddProductCategory(ProductCategoryDto model);
+        Task<bool> ProductCategoryActivation(long id);
+        Task<bool> ProductCategoryDectivation(long id);
+        Task<bool> AddProviderRequest(ProviderRequestDto model);
+    }
+}
